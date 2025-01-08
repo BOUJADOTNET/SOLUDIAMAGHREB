@@ -1,0 +1,133 @@
+﻿@model SOLUDIAMAGHREB.Models.ViewModel.ActManagerEM
+
+@* @if (Model.MyActmanag.IdactEng.Count()< 0)
+{
+    <h5>Create new Venta</h5>
+}
+else
+{
+
+
+} *@
+<div class="card border-danger">
+
+    <!--<p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>-->
+    <div class="card-body">
+        <form sp-action="EditActEngage" asp-controller="Filemanager" id="myForm" method="post">
+
+            <input type="hidden" asp-for="MyActmanag.IdactEng" />
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label for="" asp-for="MyActmanag.Capital"> Sujet de Appel Offres </label>
+                    <input type="text" asp-for="MyActmanag.Appel_Offres" class="form-control" placeholder="Sujet de Appel Offres ">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="" asp-for="MyActmanag.Objet_du_Marche">Objet du marché</label>
+                    <input type="text" asp-for="MyActmanag.Objet_du_Marche" class="form-control" placeholder="Objet du marché">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="" asp-for="MyActmanag.Marche_passe">Marché passé par Appel d’offres</label>
+                    <input type="text" asp-for="MyActmanag.Marche_passe" class="form-control" placeholder="N° registre du commerce">
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label for="" asp-for="MyActmanag.Marche_passe">Capital</label>
+                    <input type="text" asp-for="MyActmanag.Capital" class="form-control" placeholder="Capital">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="" asp-for="MyActmanag.Marche_passe">N LOT</label>
+                    <input type="text" asp-for="MyActmanag.NLot" class="form-control" placeholder="N LOT">
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label asp-for="MyActmanag.MontantHtTva"> Montant hors T.V.A </label>
+                    <input type="text" asp-for="MyActmanag.MontantHtTva" class="form-control" placeholder="Montant hors T.V.A ">
+                </div>
+                <div class="form-group col-md-2">
+                    <label asp-for="MyActmanag.TauxTva"> Taux de la TVA </label>
+                    <input type="text" asp-for="MyActmanag.TauxTva" class="form-control" placeholder="Taux de la TVA ">
+                </div>
+                <div class="form-group col-md-2">
+                    <label asp-for="MyActmanag.MontantTva"> Montant de la T.V.A </label>
+                    <input type="text" asp-for="MyActmanag.MontantTva" class="form-control" id="montantTva" placeholder="Montant de la T.V.A">
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label asp-for="MyActmanag.MontantDh"> Montant dirham (en lettres) </label>
+                    <input type="text" asp-for="MyActmanag.MontantDh" class="form-control" id="montantDh" placeholder="Montant dirham en lettres" readonly>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="MyActmanag.MontantTva"> Montant T.V.A. comprise  </label>
+                    <input type="text" asp-for="MyActmanag.MontantTvaComprise" class="form-control" placeholder="Montant T.V.A. comprise ">
+                </div>
+
+            </div>
+            <hr />
+
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label asp-for="MyActmanag.DateCreation">Date Creation</label>
+                    <input type="text" asp-for="MyActmanag.DateCreation" class="form-control" id="dateCreation" placeholder="Select Date">
+                </div>
+            </div>
+
+            <hr />
+            
+            <!-- Hide 'Suivant' button after submission and show 'Print' and 'View' buttons -->
+            <button id="suivantButton" type="submit" class="btn btn-lg btn-info custom-button Position">Edit </button>
+            <!-- Conditionally show the "View" button after data is saved -->
+           
+            @if (ViewBag.ShowViewButton != null && ViewBag.ShowViewButton == true)
+            {
+                <a id="btn-View" class="btn btn-info custom-button"
+                   href="javascript:void(0);"
+                   onclick="window.open('@Url.Action("ViewPdf", new { IdActEngage = ViewBag.IdActEngage })', '_blank');">Aperçu</a>
+                <a id="btn-Apercu" class="btn btn-info custom-button" onclick="window.location.href='@Url.Action("ImprimerAct", new { IdActEngage = ViewBag.IdActEngage })'">Print</a>
+            }
+            
+
+        </form>
+
+
+    </div>
+</div>
+<style>
+    /* Custom styles for buttons */
+    .custom-button {
+        width: 72px;
+        height: 37px;
+        font-size: 91%;
+        text-align: center;
+        padding: 10px;
+
+    }
+
+   
+
+
+    #btn-Apercu {
+        background-color: #1dd1a1;
+    }
+</style>
+@section scripts {
+
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/js/stars.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Check if the View PDF button is shown
+            var showViewPdfButton = '@(ViewBag.ShowViewButton ?? false)' === 'True';
+
+            if (showViewPdfButton) {
+                // Disable all inputs and the "Suivant" button
+                $('#myForm :input').prop('disabled', true);
+                $('#suivantButton').prop('disabled', true);
+                // $('#btn').prop('disabled', false);
+            }
+        });
+    </script>
+}

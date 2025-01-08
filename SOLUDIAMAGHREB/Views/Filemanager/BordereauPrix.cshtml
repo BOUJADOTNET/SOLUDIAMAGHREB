@@ -1,0 +1,187 @@
+﻿@model SOLUDIAMAGHREB.Models.ViewModel.BordereauPrixViewModel
+
+<div class="container">
+    <!-- Step 1: Bordereau Information -->
+    <div class="card mb-4" id="bordereauInfoCard">
+        <div class="card-header">
+            <div class="section-title">
+                <i class="bi bi-building"></i> A- BORDEREAU DES PRIX
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="bordereauForm">
+                <div class="row">
+                    <div class="form-group col-md-5">
+                        <label asp-for="Intitu_AppelOffres">intitulé Apple Offer</label>
+                        <input asp-for="Intitu_AppelOffres" class="form-control" id="Intitu_AppelOffres" />
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="NomberBordereau">N° Apple Offer</label>
+                        <input asp-for="NomberBordereau" class="form-control" readonly />
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="DateCreation">Date Creation</label>
+                        <input type="text" asp-for="DateCreation" class="form-control" id="dateCreation" placeholder="Select Date" required />
+                    </div>
+                    <div class="form-group col-md-3 d-flex align-items-end">
+                        <button type="button" id="saveBordereauBtn" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Bordereau
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Step 2: Import Excel -->
+    <div class="card mb-4" id="excelImportCard" style="display: none;">
+        <div class="card-header">
+            <div class="section-title">
+                <i class="bi bi-file-earmark-excel"></i> B- Import Excel Data
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-sm-4">
+                    <input class="form-control" type="file" id="inputExcel" accept=".xlsx,.xls" />
+                </div>
+                <div class="col-sm-8">
+                    <button type="button" class="btn btn-success" onclick="importExcelData()">
+                        <i class="bi bi-file-earmark-excel"></i> Import Excel to Database
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+   
+
+</div>
+
+@section Scripts {
+    <script src="~/assets/js/stars.js"></script>
+    <script src="~/assets/js/app.js"></script>
+
+    <script>
+        let savedBordereauNumber = '';
+
+        // Save Bordereau Information
+        document.getElementById('saveBordereauBtn').addEventListener('click', async function () {
+            const dateCreation = document.getElementById('dateCreation').value;
+            const nomberBordereau = document.getElementById('NomberBordereau').value;
+            const Intitu_AppelOffres = document.getElementById('Intitu_AppelOffres').value;
+
+            if (!dateCreation) {
+                alert('Please select a date');
+                return;
+            }
+
+            try {
+                const response = await fetch('/Filemanager/SaveBordereau', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        NomberBordereau: nomberBordereau,
+                        DateCreation: dateCreation,
+                        Intitu_AppelOffres: Intitu_AppelOffres
+                        
+
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    savedBordereauNumber = nomberBordereau;
+                    alert('Bordereau information saved successfully!');
+
+                    // Show the Excel import card
+                    document.getElementById('excelImportCard').style.display = 'block';
+
+                    // Disable the save bordereau button
+                    document.getElementById('saveBordereauBtn').disabled = true;
+                    document.getElementById('dateCreation').readOnly = true;
+                    document.getElementById('Intitu_AppelOffres').readOnly = true;
+                } else {
+                    alert('Error saving bordereau information: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving bordereau information: ' + error.message);
+            }
+        });
+
+        // Import Excel Data
+        async function importExcelData() {
+            if (!savedBordereauNumber) {
+                alert('Please save bordereau information first');
+                return;
+            }
+
+            const fileInput = document.getElementById('inputExcel');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select an Excel file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('ArchivoExcel', file);
+            formData.append('NomberBordereau', savedBordereauNumber);
+
+            try {
+                const response = await fetch('/Filemanager/EnviarDatos', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.mensaje === 'ok') {
+                    alert('Data imported successfully!');
+                    // Hide the Excel import card
+                    document.getElementById('excelImportCard').style.display = 'none';
+                    // Show the manual entry card
+                    document.getElementById('manualEntryCard').style.display = 'block';
+                   // loadDropdownOptions();
+                } else {
+                    alert('Error importing data');
+                }
+            } catch (error) {
+                // console.error('Error:', error);
+                // alert('Error importing data: ' + error.message);
+                location.reload();
+            }
+        }
+
+       
+    </script>
+}
+
+<style>
+    .section-title {
+        padding-bottom: 10px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        margin-bottom: 1rem;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+</style>

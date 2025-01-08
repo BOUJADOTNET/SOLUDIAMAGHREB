@@ -1,0 +1,155 @@
+﻿@model SOLUDIAMAGHREB.Models.ViewModel.AnalyseDataViewModel
+
+<div class="container">
+   
+    <!-- Step 1: Bordereau Information -->
+    <div class="card mb-4" id="analyseInfoCard">
+        <div class="card-header">
+            <div class="section-title">
+                <i class="bi bi-building"></i> A- Imprter fichier AVIS D’APPEL D’OFFRES
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="bordereauForm">
+                <div class="row">
+                   
+                    <div class="form-group col-md-2">
+                        <label for="selectedBordereau" class="form-label">Select Bordereau</label>
+                        <select asp-for="NomberBordereau" class="form-select" id="selectedBordereau" required>
+                            <option value="">Select Bordereau</option>
+                            @foreach (var option in Model.BordereauNumbers)
+                            {
+                                <option value="@option.Value">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label>Date Creation</label>
+                        <input type="text" asp-for="DateCreation" class="form-control" id="dateCreation" placeholder="Select Date" required />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-header">
+            <div class="section-title">
+                <i class="bi bi-file-earmark-excel"></i> B- Import Data
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-sm-4">
+                    <input class="form-control" type="file" id="inputFiles" accept=".xlsx,.xls,.docx,.doc" />
+                </div>
+                <div class="col-sm-8">
+                    <button type="button" class="btn btn-success" onclick="importData()">
+                        <i class="bi bi-file-earmark-excel"></i> Import to Database
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+     
+</div>
+@section scripts {
+    <script src="~/assets/js/stars.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/assets/js/app.js"></script>
+    <!-- Include jQuery and Bootstrap JS if not already included in the layout -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Add jQuery UI for datepicker -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+        function importData() {
+            // Get form values
+            const fileInput = document.getElementById('inputFiles');
+            const selectedBordereau = document.getElementById('selectedBordereau').value;
+            const dateCreation = document.getElementById('dateCreation').value;
+
+            // Validate inputs
+            if (!fileInput.files.length) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select a file to import!'
+                });
+                return;
+            }
+
+            if (!selectedBordereau) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select a Bordereau!'
+                });
+                return;
+            }
+
+            if (!dateCreation) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select a Date Creation!'
+                });
+                return;
+            }
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('nomberBordereau', selectedBordereau);
+            formData.append('dateCreation', dateCreation);
+
+            // Show loading indicator
+            Swal.fire({
+                title: 'Importing...',
+                html: 'Please wait while the lots are being imported',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Send AJAX request
+            $.ajax({
+                url: '/Analyse/ImportAvisAppelOffre',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Import Successful',
+                        text: `Imported ${response.lotsCount} lots with ID: ${response.idAvisAppelOff}`,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Reset the form
+                        document.getElementById('inputFiles').value = '';
+                    });
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Import Failed',
+                        text: xhr.responseText || 'An error occurred during import',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        // Initialize datepicker
+        $(document).ready(function () {
+            $('#dateCreation').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+}

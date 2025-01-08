@@ -1,0 +1,175 @@
+﻿@model SOLUDIAMAGHREB.Models.ViewModel.BordereauPrixPreviewViewModel;
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 200px; /* Add padding to prevent content overlap with footer */
+        }
+
+        .ti-tiltle {
+            font-size: 24px;
+            text-decoration: underline;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .signature {
+            margin-top: 30px;
+        }
+
+        .notes {
+            text-align: right;
+        }
+
+        .text-border-dashed {
+            text-decoration: underline;
+        }
+
+        .id-lot {
+            font-size: 14px;
+        }
+
+        .appel-offer {
+            font-size: 19px;
+        }
+
+        .cyn1 {
+            padding: 48px;
+        }
+
+        .cyn3 {
+            padding: 57px;
+        }
+
+        .cyn4 {
+            padding: 46px;
+        }
+
+        .cyn5 {
+            padding: 27px;
+        }
+
+        /* Updated Footer Styling */
+        footer {
+            position: absolute;
+            bottom: 0;
+            right: 75px;
+            width: calc(100% - 150px); /* Adjust width accounting for right margin */
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        footer hr {
+            margin-bottom: 10px;
+            /*border-top: 2px solid #000;*/
+            width: 100%;
+        }
+
+        footer p {
+            padding: 15px;
+            /*border: 1px solid #000;*/
+            background-color: #fff;
+            display: inline-block;
+            margin: 0;
+        }
+
+        /* Wrapper to ensure proper content spacing */
+        .content-wrapper {
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 200px; /* Match body padding */
+        }
+        .cNlot{
+            font-size:13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <h3 class="ti-tiltle">BORDEREAU DES PRIX DETAIL ESTIMATIF</h3>
+
+        <p class="appel-offer">@Model.AppelOffres</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>N° du lot</th>
+                    <th>Désignation</th>
+                    <th>Unité de mesure ou de compte</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire en DHS (Hors TVA)</th>
+                    <th>Prix total EN DHS Hors TVA</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Nlot</td>
+                        <td>
+                            <Strong class="text-border-dashed">DCI : </Strong> @item.Designation<br />
+                            <strong class="text-border-dashed">Nom de Marque : </strong> @item.NomdeMarque<br />
+                            <strong class="text-border-dashed">Conditionnement : </strong> @item.Conditionnement<br />
+                        </td>
+                        <td>@item.Unite_Compte</td>
+                        <td>@item.Quantite</td>
+                        <td>@item.Prix_Unit_TVA.ToString("N2")</td>
+                        <td>@item.Prix_Total_TVA.ToString("N2")</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="5"><strong>TOTAL HORS TVA EN CHIFFRES</strong></td>
+                    <td>@Model.TotalHorsTVA.ToString("N2")</td>
+                </tr>
+                <tr>
+                    <td colspan="5"><strong>TAUX DE TVA (0%)</strong></td>
+                    <td>0.00</td>
+                </tr>
+                <tr>
+                    <td colspan="5"><strong>TOTAL TTC EN CHIFFRES</strong></td>
+                    <td>@Model.TotalTTC.ToString("N2")</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="cNlot">
+            Lot N°   PRODUITS  EXONERES  DE T.V.A
+        </p>
+        <p> <strong>Arrêtée le présent Bordereau des Prix  à la somme de :@Model.TotalTTCChrac</strong></p>
+
+      
+    </div>
+  
+  
+    <footer>
+        
+        <p class="m-0 text-center">
+            <strong class="cyn1">Fait à Salé, le @Model.DateCreation.ToShortDateString()</strong> <br>
+            <strong class="cyn2">Signature et cachet du concurrent</strong><br>
+            <strong class="cyn3">Mr. KHALID KAMAL</strong> <br>
+            <strong style="font-weight: normal; font-family: Arial, sans-serif;" class="cyn4">Ingénieur Responsable</strong> <br>
+            <strong style="font-weight: normal; font-family: Arial, sans-serif;" class="cyn5">Président Directeur Général</strong>
+        </p>
+    </footer>
+</body>
+</html>
+

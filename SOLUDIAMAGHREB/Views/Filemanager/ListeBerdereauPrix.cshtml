@@ -1,0 +1,53 @@
+﻿@model List<SOLUDIAMAGHREB.Models.BordereauManager>
+
+
+<div class="text-center" style="width:100%">
+    <h4 class="display-4">Liste Bordereau Prix</h4>
+    <div>
+        <div class="card-header">
+        </div>
+        <div class="card-body">
+            <a class="btn btn-success btn-sm" asp-action="BordereauPrix" asp-controller="Filemanager">
+                Generate Berdereau de Prix
+            </a>
+            <a class="btn btn-primary btn-sm" asp-action="BordereauPrix" asp-controller="Filemanager">
+                Créer Nouveau Appel d’Offres
+            </a>
+            <hr />
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>N de Appel d’Offres</th>
+                        <th>Date de Document</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   @*  @foreach (var items in Model)
+                    {
+                        <tr>
+                            <td>@items.Nlot</td>
+                            <td>@items.DateCreation.Date.ToShortDateString()</td>
+                            <td>
+                            </td>
+                        </tr>
+                    } *@
+                </tbody>
+            </table>
+
+        </div>
+
+        <style>
+            .custom-button {
+                font-size: 78%;
+                text-align: center;
+                padding: 10px;
+            }
+        </style>
+        @section scripts {
+            <script src="~/assets/js/app.js"></script>
+            <!-- Include jQuery and Bootstrap JS if not already included in the layout -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+        }

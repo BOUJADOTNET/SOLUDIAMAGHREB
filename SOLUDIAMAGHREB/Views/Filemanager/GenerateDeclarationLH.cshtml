@@ -1,0 +1,142 @@
+﻿@model SOLUDIAMAGHREB.Models.ViewModel.ViewModelDeclarationLh
+
+
+<div class="container-fluid">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-file-earmark-text"></i> Generate Act Engagement
+            </h5>
+        </div>
+        <div class="card-body">
+            <form id="actManagerForm" asp-action="GenerateDeclarationLH" asp-controller="Filemanager" method="post">
+
+                <!-- Bordereau Selection Section -->
+                <div class="section-title">
+                    <i class="bi bi-building"></i> A- Selection Numero Bordereau
+                </div>
+                <div class="row mb-4">
+                    <div class="form-group col-md-4">
+                        <label for="NomberBordereau" class="form-label">Select Bordereau</label>
+                        <select class="form-select" id="bordereau-select" name="NomberBordereau" asp-for="NomberBordereau" asp-items="Model.BordereauNumbers" onchange="this.form.submit()">
+                            <option value="">Select Bordereau</option>
+                        </select>
+     
+                    </div>
+                </div>
+                <!-- Administration Section -->
+                <div class="section-title">
+                    <i class="bi bi-building"></i> B- Partie réservée à l'Administration
+                </div>
+                <div class="row mb-4">
+                    <div class="form-group col-md-4">
+                        <label for="appelOffres">Appel Offres</label>
+                        <input type="text" id="appelOffres" asp-for="AppelOffer" class="form-control" placeholder="Sujet de Appel Offres" readonly>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="objetMarche">Objet du marché</label>
+                        <input type="text" id="objetMarche" asp-for="ObjectMarche" class="form-control" placeholder="Objet du marché">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="capital">Capital</label>
+                        <input type="text" id="capital" asp-for="Capital" class="form-control" placeholder="Capital" required >
+                    </div>
+                </div>
+             
+                <!-- Date Section -->
+                <div class="row mb-4">
+                    <div class="form-group col-md-3">
+                        <label for="dateCreation">Date Creation</label>
+                        <input type="date" id="dateCreation" asp-for="DateCreation" class="form-control" required readonly>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary" id="saveButton">
+                            <i class="bi bi-save"></i> Save
+                        </button>
+                    </div>
+                </div>
+                </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/js/stars.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/assets/js/app.js"></script>
+    <!-- Include jQuery and Bootstrap JS if not already included in the layout -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+
+        document.getElementById('actManagerForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Get all form inputs
+            let formInputs = this.elements;
+            let data = {};
+
+            // Build the data object directly from form inputs
+            for (let input of formInputs) {
+                if (input.name) {
+                    data[input.name] = input.value;
+                }
+            }
+
+            // Disable the save button to prevent double submission
+            const saveButton = document.getElementById('saveButton');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+
+            fetch('/Filemanager/SaveDeclarationLh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: `Déclaration sur l'honneur ( ${data.idDeclar} saved successfully!`,
+                            showConfirmButton: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Reset form and reload data
+                                window.location.href = '/Filemanager/ListeDeclarationLH';
+                            }
+                        });
+                    } else {
+                        throw new Error(data.message || 'Error saving data');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message || 'An error occurred while saving the data.'
+                    });
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    // Re-enable save button and restore original text
+                    saveButton.disabled = false;
+                    saveButton.innerHTML = '<i class="bi bi-save"></i> Save';
+                });
+        });
+    </script>
+
+}

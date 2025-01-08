@@ -1,0 +1,298 @@
+﻿@model SOLUDIAMAGHREB.Models.ViewModel.AnalyseDataViewModel
+
+<div class="container">
+    <div class="row">
+        <!-- Step 1: Bordereau Information -->
+        <div class="col-md-6">
+            <div class="card mb-4" id="analyseInfoCard" >
+                <div class="card-header">
+                    <div class="section-title">
+                        <i class="bi bi-building"></i> A- Selection de Article
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="bordereauForm">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="selectedNlot" class="form-label">Article</label>
+                                <select class="form-select" id="selectedArticle" required>
+                                    <option value="">Select Article</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Step 2: Prix Par Date -->
+        <div class="col-md-6">
+            <div class="card mb-4" id="analyseInfoCard">
+                <div class="card-header" id="myPrixDate">
+                    <div class="section-title">
+                        <i class="bi bi-building"></i> B- Prix Par Date
+                    </div>
+                </div>
+                <div class="card-body" id="myPrixdatebody">
+                    <form id="bordereauForm">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="selectedDate" class="form-label">Date</label>
+                                <select class="form-select" id="selectedDate" required>
+                                    <option value="">Select Date</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3" >
+                            <div class="form-group col-sm-6 col-md-3">
+                                <label for="nlot">Nlot</label>
+                                <input type="text" class="form-control" id="nlot" readonly />
+                            </div>
+                            <div class="form-group col-sm-6 col-md-3">
+                                <label for="montantTotal">Montant tot</label>
+                                <input type="text" class="form-control" id="montantTotal" required readonly />
+                            </div>
+                            <div class="form-group col-sm-6 col-md-3">
+                                <label for="quantite">QUANTITE</label>
+                                <input type="text" class="form-control" id="quantite" required readonly />
+                            </div>
+                            <div class="form-group col-sm-6 col-md-3">
+                                <label for="prixUnitaire">Prix par Unite</label>
+                                <input type="text" class="form-control" id="prixUnitaire" required readonly />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Step 3: statistiques Mode Graphique de Prix -->
+    <div class="col-md-6">
+    <div class="card mb-4" id="analyseModeGraphic">
+        <div class="card-header">
+            <div class="section-title">
+                <i class="bi bi-building"></i> C- Model Graphic de Prix
+            </div>
+        </div>
+        <div style="width: 100%; height: 400px;">
+            <canvas id="priceChart"></canvas>
+        </div>
+    </div>
+    </div>
+</div>
+<style>
+    .card-header {
+        cursor: pointer;
+    }
+</style>
+@section Scripts {
+    <script src="~/assets/js/stars.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('#myPrixDate').click(function () {
+                $(this).closest('.card').find('#myPrixdatebody').slideToggle();
+            });
+
+            // Initialize with card body visible
+            $('#myPrixdatebody').hide();
+
+            // Load articles when page loads
+            loadArticles();
+
+            // Event handler for article selection
+            $('#selectedArticle').change(function () {
+                const selectedNlot = $(this).val();
+                if (selectedNlot) {
+                    loadDatesForArticle(selectedNlot);
+                    clearFormFields();
+                } else {
+                    $('#selectedDate').empty().append('<option value="">Select Date</option>');
+                    clearFormFields();
+                }
+            });
+
+            // Event handler for date selection
+            $('#selectedDate').change(function () {
+                const selectedDate = $(this).val();
+                const selectedNlot = $('#selectedArticle').val();
+                if (selectedDate && selectedNlot) {
+                    loadArticleDetails(selectedNlot, selectedDate);
+                } else {
+                    clearFormFields();
+                }
+            });
+
+            // // Toggle visibility of inputs and selects
+            // $('#analyseInfoCard').click(function () {
+            //     const inputs = $(this).find('input, select');
+            //     inputs.toggle();
+            // });
+
+            function loadArticles() {
+                $.ajax({
+                    url: '/Analyse/GetUniqueArticles',
+                    method: 'GET',
+                    success: function (data) {
+                        const select = $('#selectedArticle');
+                        select.empty();
+                        select.append('<option value="">Select Article</option>');
+
+                        data.forEach(function (article) {
+                            select.append(
+                                `<option value="${article.nlot}">Lot ${article.nlot} - ${article.designation}</option>`
+                            );
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error loading articles:', error);
+                        alert('Error loading articles. Please try again.');
+                    }
+                });
+            }
+
+            function loadDatesForArticle(nlot) {
+                $.ajax({
+                    url: `/Analyse/GetDatesByArticle?nlot=${nlot}`,
+                    method: 'GET',
+                    success: function (data) {
+                        const select = $('#selectedDate');
+                        select.empty();
+                        select.append('<option value="">Select Date</option>');
+
+                        data.forEach(function (date) {
+                            const formattedDate = new Date(date).toLocaleDateString();
+                            select.append(
+                                `<option value="${date}">${formattedDate}</option>`
+                            );
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error loading dates:', error);
+                        alert('Error loading dates. Please try again.');
+                    }
+                });
+            }
+
+            function loadArticleDetails(nlot, date) {
+                $.ajax({
+                    url: `/Analyse/GetArticlesByDate?selectedDate=${date}`,
+                    method: 'GET',
+                    success: function (data) {
+                        const article = data.find(a => a.nlot == nlot);
+                        if (article) {
+                            $('#nlot').val(article.nlot);
+                            $('#montantTotal').val(article.montantTotalDHS);
+                            $('#quantite').val(article.quantite);
+                            $('#prixUnitaire').val(article.prixUnitaire);
+                        } else {
+                            clearFormFields();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error loading article details:', error);
+                        alert('Error loading article details. Please try again.');
+                    }
+                });
+            }
+
+            function clearFormFields() {
+                $('#nlot').val('');
+                $('#montantTotal').val('');
+                $('#quantite').val('');
+                $('#prixUnitaire').val('');
+            }
+        });
+    </script>
+    <script>
+        let priceChart;
+
+        function initializeChart() {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Prix par Unité',
+                        data: [],
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Evolution du Prix par Unité'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Prix (DHS)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        async function updateChart(nlot) {
+            try {
+                const datesResponse = await fetch(`/Analyse/GetDatesByArticle?nlot=${nlot}`);
+                const dates = await datesResponse.json();
+
+                const priceData = await Promise.all(dates.map(async (date) => {
+                    const articleResponse = await fetch(`/Analyse/GetArticlesByDate?selectedDate=${date}`);
+                    const articles = await articleResponse.json();
+                    const article = articles.find(a => a.nlot == nlot);
+                    return {
+                        date: new Date(date).toLocaleDateString(),
+                        price: article ? article.prixUnitaire : 0
+                    };
+                }));
+
+                priceData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                priceChart.data.labels = priceData.map(d => d.date);
+                priceChart.data.datasets[0].data = priceData.map(d => d.price);
+                priceChart.update();
+            } catch (error) {
+                console.error('Error updating chart:', error);
+            }
+        }
+
+        $(document).ready(function () {
+            // Your existing ready function code...
+
+            // Initialize chart
+            initializeChart();
+
+            // Add event listener to article select
+            $('#selectedArticle').change(function () {
+                const selectedNlot = $(this).val();
+                if (selectedNlot) {
+                    updateChart(selectedNlot);
+                }
+            });
+        });
+    </script>
+}

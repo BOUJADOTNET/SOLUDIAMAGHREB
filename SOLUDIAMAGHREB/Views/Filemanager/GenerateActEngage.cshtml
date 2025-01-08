@@ -1,0 +1,281 @@
+﻿@model SOLUDIAMAGHREB.Models.ViewModel.ViewModelActManager
+
+<div class="container-fluid">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-file-earmark-text"></i> Generate Act Engagement
+            </h5>
+        </div>
+        <div class="card-body">
+            <form id="actManagerForm" asp-action="GenerateActEngage" asp-controller="Filemanager" method="post">
+
+                <!-- Bordereau Selection Section -->
+                <div class="section-title">
+                    <i class="bi bi-building"></i> A- Selection Numero Bordereau
+                </div>
+                <div class="row mb-4">
+                    <div class="form-group col-md-4">
+                        <label for="NomberBordereau" class="form-label">Select Bordereau</label>
+                        <select class="form-select" id="bordereau-select" name="NomberBordereau" asp-for="NomberBordereau" asp-items="Model.BordereauNumbers" onchange="this.form.submit()">
+                            <option value="">Select Bordereau</option>
+                        </select>
+                       
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="NLot" class="form-label">Select Nlot</label>
+                        <select class="form-select" name="NLot" asp-for="NLot" asp-items="Model.NLotNumbers" >
+                            <option value="">Select Nlot</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Administration Section -->
+                <div class="section-title">
+                    <i class="bi bi-building"></i> B- Partie réservée à l'Administration
+                </div>
+                <div class="row mb-4">
+                    <div class="form-group col-md-4">
+                        <label for="appelOffres">Appel Offres</label>
+                        <input type="text" id="appelOffres" asp-for="Appel_Offres" class="form-control" placeholder="Sujet de Appel Offres" readonly>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="objetMarche">Objet du marché</label>
+                        <input type="text" id="objetMarche" asp-for="Objet_du_Marche" class="form-control" placeholder="Objet du marché" >
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="marchePasse">Marché passé par Appel d'offres</label>
+                        <input type="text" id="marchePasse" asp-for="Marche_passe" class="form-control" placeholder="Marché passé par Appel d'offres" >
+                    </div>
+                </div>
+
+                <!-- Concurrent Section -->
+                <div class="section-title">
+                    <i class="bi bi-bank"></i> C- Partie réservée au concurrent
+                </div>
+                <div class="row mb-4">
+                    <div class="form-group col-md-4">
+                        <label for="capital">Capital</label>
+                        <input type="text" id="capital" asp-for="Capital" class="form-control" placeholder="Capital" required>
+                    </div>
+
+                </div>
+
+                <!-- TVA Section -->
+                <div class="section-title">
+                    <i class="bi bi-percent"></i> D- Partie T.V.A
+                </div>
+                <div class="row mb-4">
+                    <div class="form-group col-md-2">
+                        <label for="montantHtTva">Montant hors T.V.A</label>
+                        <input type="number" id="montantHtTva" asp-for="MontantHtTva" class="form-control" placeholder="Montant hors T.V.A" step=".01" readonly>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="tauxTva">Taux de la TVA</label>
+                        <input type="number" id="tauxTva" asp-for="TauxTva" class="form-control" placeholder="Taux de la TVA" readonly>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="montantTva">Montant de la T.V.A</label>
+                        <input type="number" id="montantTva" asp-for="MontantTva"  class="form-control" placeholder="Montant de la T.V.A">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="montantDh">Montant dirham (en lettres)</label>
+                        <input type="text" id="montantDh" asp-for="MontantDh" class="form-control" placeholder="Montant dirham en lettres">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="montantTvaComprise">Montant T.V.A. comprise</label>
+                        <input type="number" id="montantTvaComprise"asp-for="MontantTvaComprise" class="form-control" placeholder="Montant T.V.A. comprise" readonly>
+                    </div>
+                </div>
+
+                <!-- Date Section -->
+                <div class="row mb-4">
+                    <div class="form-group col-md-3">
+                        <label for="dateCreation">Date Creation</label>
+                        <input type="date" id="dateCreation" asp-for="DateCreation" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary" id="saveButton">
+                            <i class="bi bi-save"></i> Save
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                      
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #dc3545;
+        padding: 10px 0;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #dc3545;
+        display: flex;
+        align-items: center;
+    }
+
+        .section-title i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    #nLotContainer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        background-color: #f8f9fa;
+        min-height: 50px;
+    }
+
+        #nLotContainer .form-check {
+            margin: 5px 15px;
+        }
+
+    .form-control:read-only {
+        background-color: #e9ecef;
+    }
+
+    .btn {
+        margin-right: 10px;
+    }
+
+    .alert {
+        margin-bottom: 15px;
+    }
+</style>
+
+@section Scripts {
+    <script src="~/assets/js/stars.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/assets/js/app.js"></script>
+    <!-- Include jQuery and Bootstrap JS if not already included in the layout -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+      
+        $(document).ready(function () {
+            const montantDhInput = document.getElementById('montantDh');
+
+            $('#bordereau-select, [name="NLot"]').on('change', function () {
+                var selectedBordereau = $('#bordereau-select').val();
+
+                var selectedNLot = $('[name="NLot"]').val();
+
+                if (selectedBordereau && selectedNLot) {
+                    $.ajax({
+                        url: '@Url.Action("GetNLotDetails", "Filemanager")',
+                        type: 'GET',
+                        data: {
+                            bordereau: selectedBordereau,
+                            nLot: selectedNLot
+                        },
+                        success: function (data) {
+                            $('#montantHtTva').val(data.prixTotalTva.toFixed(2))
+
+                            // Optional: Additional field population if needed
+                            // $('#tauxTva').val(data.tauxTva);
+                            $('#montantTvaComprise').val(data.montantTvaComprise.toFixed(2));
+                            montantDhInput.value = '(zéro Dirhams)';
+                        },
+                        error: function () {
+                            alert('Error retrieving lot details');
+                        }
+                    });
+                }
+
+            });
+        });
+      
+    </script>
+    <script>
+
+
+
+        document.getElementById('actManagerForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Get all form inputs
+            let formInputs = this.elements;
+            let data = {};
+
+            // Build the data object directly from form inputs
+            for (let input of formInputs) {
+                if (input.name) {
+                    data[input.name] = input.value;
+                }
+            }
+
+            // Disable the save button to prevent double submission
+            const saveButton = document.getElementById('saveButton');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+
+            fetch('/Filemanager/SaveActEngagement', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: `Act Engagement ${data.idActEng} saved successfully!`,
+                            showConfirmButton: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Reset form and reload data
+                                window.location.href = '/Filemanager/ListActEngage';
+                            }
+                        });
+                    } else {
+                        throw new Error(data.message || 'Error saving data');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message || 'An error occurred while saving the data.'
+                    });
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    // Re-enable save button and restore original text
+                    saveButton.disabled = false;
+                    saveButton.innerHTML = '<i class="bi bi-save"></i> Save';
+                });
+        });
+
+    </script>
+}
+
+

@@ -1,0 +1,125 @@
+﻿@model SOLUDIAMAGHREB.Models.ViewModel.ViewModelDeclarationLh;
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Déclaration sur l'honneur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            /* Add padding to prevent content overlap with footer */
+        }
+
+        .underline {
+            text-decoration: underline;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .appelOffres {
+            text-decoration: underline;
+        }
+
+        .objetMarche {
+            text-decoration: underline;
+        }
+        /* Footer Section */
+        footer {
+            text-align: center;
+            position: absolute;
+            right: 75px;
+        }
+
+            footer hr {
+                margin-bottom: -22px;
+                border-top: 2px solid var(--darkWhite);
+            }
+
+            footer p {
+                padding: 6px;
+                border: 1px solid var(--darkWhite);
+                background-color: var(--white);
+                display: inline-block;
+            }
+    </style>
+</head>
+<body>
+    <div>
+        <h3 class="underline">DÉCLARATION SUR L'HONNEUR</h3>
+
+        <p class="appelOffres"><strong>@Model.AppelOffer</strong></p>
+
+        <p><strong class ="objetMarche">Objet du marché :</strong> @Model.ObjectMarche</p>
+
+        <p style="text-align: center;"><strong>B- Pour les personnes morales :</strong></p>
+
+        <p>Je soussigné, <strong>[MR]</strong> Charger Chef de projet.</p>
+
+        <p>Numéro de tél : 05 00 00 00 00/00 00 00 Numéro du fax : 05 00 00 00 00</p>
+
+        <p>Adresse électronique : Mytest@mail.com</p>
+
+        <p>agissant au nom et pour le compte du Consulting Bouda Sarl, SO, au capital de @Model.Capital DH</p>
+
+        <p>Adresse du siège social de la société : Avenue Ville Juief Paris Apt 50.</p>
+
+        <p>Affilié à la CNSS sous le n° 000000.</p>
+
+        <p>Inscrit au registre de commerce à Salé sous le n° 0000.</p>
+
+        <p>N° de patente : 000000000.</p>
+
+        <p>N° compte : 00000000000000000000 00.</p>
+
+        <p>Banque : Bank bank bank bank bank bank bank bank bank bank bank bank bank bank bank bank</p>
+
+        <p>youssef 20 000 Casablanca.</p>
+
+        <h2 class="underline">DECLARE SUR L'HONNEUR</h2>
+
+        <ol>
+            <li>que je remplis les conditions prévues à l'article 27 du décret relatif aux marchés publics;</li>
+
+            <li>m'engager à couvrir, dans les conditions fixées dans le cahier des charges, par une police d'assurance, les risques découlant de mon activité professionnelle;</li>
+
+            <li>
+                m'engage, si j'envisage de recourir à la sous-traitance:
+                <ul>
+                    <li>à veiller à ce que celle-ci ne dépasse pas cinquante pour cent (50%) du montant du marché et qu'elle ne porte pas sur le lot ou le corps d'état principal du marché;</li>
+                    <li>à m'assurer que les sous-traitants auxquels je recours remplissent les conditions prévues à l'article 27 du décret n° 2-22-431 du 8 mars 2023.</li>
+                </ul>
+            </li>
+
+            <li>atteste que je dispose des autorisations requises pour l'exécution des prestations telles que prévues par la législation et la réglementation en vigueur;</li>
+
+            <li>atteste que je ne suis pas en liquidation judiciaire ou redressement judiciaire;</li>
+
+            <li>je m'engage à ne pas recourir par moi-même ou par personne interposée à des pratiques de fraude ou de corruption des personnes qui interviennent, à quelque titre que ce soit, dans les procédures de passation, de gestion et d'exécution du marché;</li>
+
+            <li>je m'engage à ne pas faire, par moi-même ou par personne interposée, de promesses, de dons ou de présents, en vue d'influer sur la procédure de conclusion du marché et de son exécution;</li>
+
+            <li>j'atteste que je ne suis pas en situation de conflit d'intérêts;</li>
+
+            <li>j'atteste que je n'ai pas participé à la préparation du dossier de l'appel d'offres considéré;</li>
+        </ol>
+
+        <p>Je certifie l'exactitude des renseignements contenus dans la présente déclaration sur l'honneur et dans les pièces fournies dans mon dossier de candidature, sous peine de l'application des mesures coercitives prévues à l'article 152 du décret n° 2-22-431 du 8 mars 2023.</p>
+    </div>
+    <footer>
+        <hr>
+        <p class="m-0 text-center">
+            <strong class="cyn1">Fait à Salé, le @Model.DateCreation.ToShortDateString()</strong> <br>
+            <strong class="cyn2">Signature et cachet du concurrent</strong><br>
+            <strong class="cyn3">Mr. KHALID KAMAL</strong> <br>
+            <strong style="font-weight: normal; font-family: Arial, sans-serif;" class="cyn4">Ingénieur Responsable</strong> <br>
+            <strong style="font-weight: normal; font-family: Arial, sans-serif;" class="cyn5">Président Directeur Général</strong>
+        </p>
+
+    </footer>
+    </body>
+</html>

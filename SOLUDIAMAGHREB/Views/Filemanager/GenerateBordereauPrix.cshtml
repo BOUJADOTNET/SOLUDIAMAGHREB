@@ -1,0 +1,351 @@
+﻿@model SOLUDIAMAGHREB.Models.ViewModel.BordereauPrixViewModel
+
+
+<div class="card" id="manualEntryCard">
+
+    <div class="card mb-4" id="bordereauSelectCard">
+        <div class="card-header">
+            <div class="section-title">
+                <i class="bi bi-building"></i> Select Bordereau
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row d-flex align-items-center">
+                <!-- Bordereau Selection -->
+                <div class="col-md-4 mb-3">
+                    <label for="selectedBordereau" class="form-label">Select Bordereau</label>
+                    <select class="form-select" id="selectedBordereau" required>
+                        <option value="">Select Bordereau</option>
+                        @foreach (var option in Model.BordereauNumberOptions)
+                        {
+                            <option value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+
+                </div>
+
+                <!-- Generate Nv Button on the Right -->
+                <div class="col-md-4 mb-3 d-flex justify-content-end">
+                    <button type="button" id="generateNv" class="btn btn-warning" style="display: none;"
+                            onclick="window.location.href='@Url.Action("GenerateBordereauPrix", "Filemanager")'">
+                        <i class="bi bi-building-fill-gear"></i> Generate Nv
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- Step 3: Manual Item Entry Form -->
+    <div class="card" id="manualEntryCard">
+        <div class="card-header">
+            <div class="section-title">
+                <i class="bi bi-pencil-square"></i> C- Manual Item Entry
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="itemEntryForm">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="AppelOffres" class="form-label">Appel d'affaire :</label>
+                        <input type="text" class="form-control" id="AppelOffres" step="0.01" readonly required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="nlot" class="form-label">N° Lot</label>
+                        <select class="form-select" id="nlot" required>
+                            <option value="">Select N° Lot</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="designation" class="form-label">Designation</label>
+                        @* <select class="form-select" id="designation" required>
+                            <option value="">Select Designation</option>
+                        </select> *@
+                        <input type="text" class="form-control" id="designation" step="0.01" readonly required>
+
+                    </div>
+                    <div class="col-md-4 mb-3 d-flex align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="showDetailsCheck">
+                            <label class="form-check-label" for="showDetailsCheck">
+                                Add Details Designation
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Additional Details Section (initially hidden) -->
+                <div class="row" id="additionalDetails" style="display: none;">
+                    <div class="col-md-6 mb-3">
+                        <label for="NomdeMarque" class="form-label">Nom de Marque</label>
+                        <input type="text" class="form-control" id="NomdeMarque">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="Conditionnement" class="form-label">Conditionnement</label>
+                        <input type="text" class="form-control" id="Conditionnement">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="uniteCompte" class="form-label">Unite Compte</label>
+                       @*  <select class="form-select" id="uniteCompte" required>
+                            <option value="">Select Unite Compte</option>
+                        </select> *@
+                        <input type="text" class="form-control" id="uniteCompte" step="0.01" readonly required>
+
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="quantite" class="form-label">Quantite</label>
+                       @*  <select class="form-select" id="quantite" required>
+                            <option value="">Select Quantite</option>
+                        </select> *@
+                        <input type="text" class="form-control" id="quantite" step="0.01" readonly required>
+
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="prixUnitTVA" class="form-label">Prix Unit TVA</label>
+                        <input type="number" class="form-control" id="prixUnitTVA" step="0.01" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="prixTotalTVA" class="form-label">Prix Total TVA</label>
+                        <input type="number" class="form-control" id="prixTotalTVA" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary" id="saveItemBtn">
+                            <i class="bi bi-save"></i> Save Item
+                        </button>
+                        <button type="button" class="btn btn-success" id="previewBtn" style="display: none;">
+                            <i class="bi bi-file-pdf"></i> Preview PDF
+                        </button>
+                        <button type="button" class="btn btn-primary" id="Savebtn" style="display: none;">
+                            <i class="bi bi-floppy"></i> Save PDF
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+</div>
+<style>
+    .disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+
+@section scripts {
+    <script src="~/assets/js/stars.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/assets/js/app.js"></script>
+    <!-- Include jQuery and Bootstrap JS if not already included in the layout -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Form elements
+    const form = document.getElementById('itemEntryForm');
+    const nlotSelect = document.getElementById('nlot');
+    const designationSelect = document.getElementById('designation');
+    const uniteCompteSelect = document.getElementById('uniteCompte');
+    const quantiteSelect = document.getElementById('quantite');
+    const prixUnitTVAInput = document.getElementById('prixUnitTVA');
+    const prixTotalTVAInput = document.getElementById('prixTotalTVA');
+    const bordereauSelect = document.getElementById('selectedBordereau');
+
+    // Event listeners
+    bordereauSelect.addEventListener('change', loadBordereauData);
+    nlotSelect.addEventListener('change', loadItemDetails);
+    prixUnitTVAInput.addEventListener('input', calculateTotalPrice);
+    quantiteSelect.addEventListener('change', calculateTotalPrice);
+
+    async function loadBordereauData() {
+        const selectedBordereau = bordereauSelect.value;
+        if (!selectedBordereau) return;
+
+        try {
+            // Load dropdown options
+            const optionsResponse = await fetch(`/Filemanager/GetBordereauOptions?bordereauNumber=${selectedBordereau}`);
+            if (!optionsResponse.ok) throw new Error('Failed to load options');
+            const optionsData = await optionsResponse.json();
+
+            // Populate dropdowns
+            populateDropdown('nlot', optionsData.nlots);
+                
+           // populateDropdown('designation', optionsData.designations);
+           // populateDropdown('uniteCompte', optionsData.uniteComptes);
+           // populateDropdown('quantite', optionsData.quantites);
+         
+
+            // Update the Intitu_AppelOffres input with the correct property name
+            document.getElementById('AppelOffres').value = optionsData.intitu_AppelOffres; // Added fallback empty string
+
+            // Reset price inputs
+            prixUnitTVAInput.value = '';
+            prixTotalTVAInput.value = '';
+        } catch (error) {
+            console.error('Error loading bordereau data:', error);
+            alert('Error loading bordereau data');
+        }
+    }
+
+    async function loadItemDetails() {
+        const selectedBordereau = bordereauSelect.value;
+        const selectedNlot = nlotSelect.value;
+
+        if (!selectedBordereau || !selectedNlot) return;
+
+        try {
+            const response = await fetch(`/Filemanager/GetBordereauItemDetails?bordereauNumber=${selectedBordereau}&nlot=${selectedNlot}`);
+            if (!response.ok) throw new Error('Failed to load item details');
+            const itemData = await response.json();
+
+            // Update form fields with item details
+            designationSelect.value = itemData.designation;
+            uniteCompteSelect.value = itemData.uniteCompte;
+            quantiteSelect.value = itemData.quantite;
+            prixUnitTVAInput.value = itemData.prixUnitTVA;
+
+            // Calculate total price
+            calculateTotalPrice();
+        } catch (error) {
+            console.error('Error loading item details:', error);
+            alert('Error loading item details');
+        }
+    }
+
+    function calculateTotalPrice() {
+        const quantite = parseFloat(quantiteSelect.value) || 0;
+        const prixUnitTVA = parseFloat(prixUnitTVAInput.value) || 0;
+        const total = quantite * prixUnitTVA;
+        prixTotalTVAInput.value = total.toFixed(2);
+    }
+
+    // Add this to your existing JavaScript
+    document.getElementById('showDetailsCheck').addEventListener('change', function () {
+        const additionalDetails = document.getElementById('additionalDetails');
+        additionalDetails.style.display = this.checked ? 'flex' : 'none';
+    });
+
+    function populateDropdown(elementId, options) {
+        const select = document.getElementById(elementId);
+        select.innerHTML = '<option value="">Select option</option>';
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option;
+            optionElement.textContent = option;
+            select.appendChild(optionElement);
+        });
+    }
+
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            AppelOffres: document.getElementById('AppelOffres').value,
+            NomberBordereau: bordereauSelect.value,
+            Nlot: nlotSelect.value,
+            Designation: designationSelect.value,
+            NomdeMarque: document.getElementById('NomdeMarque').value,
+            Conditionnement: document.getElementById('Conditionnement').value,
+            Unite_Compte: uniteCompteSelect.value,
+            Quantite: quantiteSelect.value,
+            Prix_Unit_TVA: prixUnitTVAInput.value,
+            Prix_Total_TVA: prixTotalTVAInput.value
+        };
+
+        try {
+            const response = await fetch('/Filemanager/SaveMyBorderauItem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) throw new Error('Failed to save item');
+
+            const result = await response.json();
+            if (result.success) {
+                alert('Item saved successfully');
+
+                // Make all form fields readonly/disabled
+                document.getElementById('selectedBordereau').disabled = true;
+                document.getElementById('AppelOffres').disabled = true;
+                document.getElementById('nlot').disabled = true;
+                document.getElementById('designation').disabled = true;
+                document.getElementById('NomdeMarque').readOnly = true;
+                document.getElementById('Conditionnement').readOnly = true;
+                document.getElementById('uniteCompte').disabled = true;
+                document.getElementById('quantite').disabled = true;
+                document.getElementById('prixUnitTVA').readOnly = true;
+                document.getElementById('showDetailsCheck').disabled = true;
+
+                // Hide save button and show preview button
+                // Show preview button
+                document.getElementById('saveItemBtn').style.display = 'none';
+                document.getElementById('previewBtn').style.display = 'inline-block';
+                document.getElementById('Savebtn').style.display = 'inline-block';
+                document.getElementById('generateNv').style.display = 'inline-block';
+                // Reset form
+                // form.reset();
+            } else {
+                throw new Error(result.message || 'Failed to save item');
+            }
+        } catch (error) {
+            console.error('Error saving item:', error);
+            alert('Error saving item: ' + error.message);
+        }
+    });
+
+        // Replace the existing preview button click handler with this one
+        document.getElementById('previewBtn').addEventListener('click', () => {
+            const bordereauNumber = bordereauSelect.value;
+            const selectedNlot = nlotSelect.value;
+
+            if (bordereauNumber && selectedNlot) {
+                window.open(`/Filemanager/PreviewBordereau?bordereauNumber=${bordereauNumber}&nlot=${selectedNlot}`, '_blank');
+            } else {
+                alert('Please select both a bordereau number and a lot number.');
+            }
+        });
+
+        // Also add validation to the save button to ensure only one lot is saved at a time
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Check if a lot is already saved for this bordereau number
+            const bordereauNumber = bordereauSelect.value;
+            const selectedNlot = nlotSelect.value;
+
+            if (!bordereauNumber || !selectedNlot) {
+                alert('Please select both a bordereau number and a lot number.');
+                return;
+            }
+
+            const formData = {
+                AppelOffres: document.getElementById('AppelOffres').value,
+                NomberBordereau: bordereauNumber,
+                Nlot: selectedNlot,
+                Designation: designationSelect.value,
+                NomdeMarque: document.getElementById('NomdeMarque').value,
+                Conditionnement: document.getElementById('Conditionnement').value,
+                Unite_Compte: uniteCompteSelect.value,
+                Quantite: quantiteSelect.value,
+                Prix_Unit_TVA: prixUnitTVAInput.value,
+                Prix_Total_TVA: prixTotalTVAInput.value
+            };
+
+            // Rest of your existing save logic...
+        });
+
+
+
+</script>
+}
