@@ -21,10 +21,10 @@ public partial class DbsoludiaContext : DbContext
     public DbSet<BordereauManager> bordereauManagers { get; set; }
     public DbSet<BordereauItem> bordereauItems { get; set; }
     public DbSet<MyBorderauItems> MyBorderauItems { get; set; }
-    public DbSet<Declarationlh> MyDeclarationlhs {  get; set; }
-    public DbSet<Analyse> MyAnalyses {  get; set; }
+    public DbSet<Declarationlh> MyDeclarationlhs { get; set; }
+    public DbSet<Analyse> MyAnalyses { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=localhost\\SERVERBASES;Initial Catalog=DBSOLUDIAMAGHREB;Integrated Security=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=DEVELOPSLD\\SQL2010;Initial Catalog=DBSOLUDIAMAGHREB;Integrated Security=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -143,14 +143,15 @@ public partial class DbsoludiaContext : DbContext
                 .IsRequired(false);
             entity.Property(e => e.Capital)
             .IsRequired(false);
-            entity.Property(e=>e.DateCreation)
+            entity.Property(e => e.DateCreation)
             .IsRequired()
             .HasDefaultValueSql("CAST(GETDATE() AS DATE)");
 
 
         });
 
-        modelBuilder.Entity<Analyse>(entity => {
+        modelBuilder.Entity<Analyse>(entity =>
+        {
             entity.ToTable("Analyse");
             entity.HasKey(e => e.idAvisAppelOff).HasName("Pk__IDAvisAppelOffer");
             entity.Property(b => b.idAvisAppelOff)
@@ -205,7 +206,7 @@ public partial class DbsoludiaContext : DbContext
 
         OnModelCreatingPartial(modelBuilder);
 
-        
+
 
     }
 

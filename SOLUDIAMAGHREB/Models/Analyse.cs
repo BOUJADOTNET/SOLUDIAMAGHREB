@@ -2,7 +2,7 @@
 {
     public class Analyse
     {
-        public int idAvisAppelOff {  get; set; }
+        public int idAvisAppelOff { get; set; }
         public int Nlot { get; set; }
         public decimal Montant_total_DHS { get; set; }
         public string Montant_total_littre_DHS { get; set; }

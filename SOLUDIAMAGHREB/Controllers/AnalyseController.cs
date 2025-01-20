@@ -1,14 +1,10 @@
-﻿using EFCore.BulkExtensions;
+﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using NPOI.HSSF.UserModel;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 using NPOI.XWPF.UserModel;
 using SOLUDIAMAGHREB.Data;
 using SOLUDIAMAGHREB.Models;
 using SOLUDIAMAGHREB.Models.ViewModel;
-using System.Text.RegularExpressions;
 
 namespace SOLUDIAMAGHREB.Controllers
 {
@@ -42,8 +38,8 @@ namespace SOLUDIAMAGHREB.Controllers
                             {
                                 bi.Quantite,
                                 bi.Prix_Unit_TVA
-                               // bi.Designation
-                              
+                                // bi.Designation
+
                             })
                             .FirstOrDefault()
                     })
@@ -55,7 +51,7 @@ namespace SOLUDIAMAGHREB.Controllers
                     nlot = a.Nlot,
                     MontantTotalDHS = a.Montant_total_DHS,
                     Quantite = a.BordereauItemDetails?.Quantite ?? 0,
-                   // Designation = a.BordereauItemDetails?.Designation ?? "",
+                    // Designation = a.BordereauItemDetails?.Designation ?? "",
                     PrixUnitaire = a.Montant_total_DHS / a.BordereauItemDetails?.Quantite
                 }).ToList();
 
@@ -140,7 +136,8 @@ namespace SOLUDIAMAGHREB.Controllers
 
 
         [HttpGet]
-        public IActionResult AvisAppelOffer() {
+        public IActionResult AvisAppelOffer()
+        {
 
             //string AvisAppelOffers = GetNumAvisAppelOffer();
             // Get the list of bordereau numbers
@@ -152,13 +149,13 @@ namespace SOLUDIAMAGHREB.Controllers
             var viewModel = new AnalyseDataViewModel
             {
                 //NomberBordereau = generatedNomberBordereau,
-              //  idAvisAppelOff = AvisAppelOffers,
+                //  idAvisAppelOff = AvisAppelOffers,
                 BordereauNumbers = bordereauNumbers.Select(b => new SelectListItem { Value = b, Text = b }).ToList(),
             };
 
-            return View(viewModel); 
-        
-        
+            return View(viewModel);
+
+
         }
 
         [HttpGet]
@@ -182,12 +179,12 @@ namespace SOLUDIAMAGHREB.Controllers
                 List<Analyse> lots = ParseLotsFromWordDocument(file);
 
                 // Generate unique ID for Avis Appel Offre
-              //  string idAvisAppelOff = GetNumAvisAppelOffer();
+                //  string idAvisAppelOff = GetNumAvisAppelOffer();
 
                 // Add lots to database
                 foreach (var lot in lots)
                 {
-                   // lot.idAvisAppelOff = idAvisAppelOff;
+                    // lot.idAvisAppelOff = idAvisAppelOff;
                     lot.NomberBordereau = nomberBordereau;
                     lot.DateCreation = dateCreation;
 
@@ -199,7 +196,7 @@ namespace SOLUDIAMAGHREB.Controllers
                 return Ok(new
                 {
                     message = "Lots imported successfully",
-                  //  IdAvisAppelOff = idAvisAppelOff,
+                    //  IdAvisAppelOff = idAvisAppelOff,
                     lotsCount = lots.Count
                 });
             }
