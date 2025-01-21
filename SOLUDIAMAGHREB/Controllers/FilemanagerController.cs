@@ -1,4 +1,5 @@
-﻿using EFCore.BulkExtensions;
+﻿using System.Security.Claims;
+using EFCore.BulkExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,6 @@ using SOLUDIAMAGHREB.Data;
 using SOLUDIAMAGHREB.Models;
 using SOLUDIAMAGHREB.Models.ViewModel;
 using SOLUDIAMAGHREB.Resources;
-using System.Security.Claims;
 
 
 namespace SOLUDIAMAGHREB.Controllers
@@ -32,43 +32,46 @@ namespace SOLUDIAMAGHREB.Controllers
         public IActionResult GenerateDeclarationLH(string selectedBordereauDec = null)
         {
             var viewModel = new ViewModelDeclarationLh();
-           // if (!string.IsNullOrEmpty(selectedBordereau))
-          //  {
+            // if (!string.IsNullOrEmpty(selectedBordereau))
+            //  {
 
-                viewModel.BordereauNumbers = _dbcontext.MyBorderauItems
-                     .Select(b => b.NomberBordereau)
-                     .Distinct()
-                     .OrderBy(n => n)
-                     .Select(n => new SelectListItem
-                     {
-                         Value = n,
-                         Text = n,
-                         Selected = n == selectedBordereauDec
-                     })
-                     .ToList();
-         
+            viewModel.BordereauNumbers = _dbcontext.MyBorderauItems
+                 .Select(b => b.NomberBordereau)
+                 .Distinct()
+                 .OrderBy(n => n)
+                 .Select(n => new SelectListItem
+                 {
+                     Value = n,
+                     Text = n,
+                     Selected = n == selectedBordereauDec
+                 })
+                 .ToList();
 
-                var result = _dbcontext.Actmanagers
-                  .Where(b => b.NomberBordereau == selectedBordereauDec)
-                  .Select(b => new
-                  {
-                      b.Objet_du_Marche, b.Capital,b.Appel_Offres,b.DateCreation
-                  })
-                  .FirstOrDefault();
 
-                if (result != null)
-                {
-                    viewModel.ObjectMarche = result.Objet_du_Marche;
-                    viewModel.Capital = result.Capital;
-                    viewModel.AppelOffer = result.Appel_Offres;
-                    viewModel.DateCreation = result.DateCreation;
-                }
-                else
-                {
-                    viewModel.ObjectMarche = null;
-                    viewModel.Capital = null;
-                    viewModel.AppelOffer = null;
-                    viewModel.DateCreation = DateTime.Now;
+            var result = _dbcontext.Actmanagers
+              .Where(b => b.NomberBordereau == selectedBordereauDec)
+              .Select(b => new
+              {
+                  b.Objet_du_Marche,
+                  b.Capital,
+                  b.Appel_Offres,
+                  b.DateCreation
+              })
+              .FirstOrDefault();
+
+            if (result != null)
+            {
+                viewModel.ObjectMarche = result.Objet_du_Marche;
+                viewModel.Capital = result.Capital;
+                viewModel.AppelOffer = result.Appel_Offres;
+                viewModel.DateCreation = result.DateCreation;
+            }
+            else
+            {
+                viewModel.ObjectMarche = null;
+                viewModel.Capital = null;
+                viewModel.AppelOffer = null;
+                viewModel.DateCreation = DateTime.Now;
 
             }
 
@@ -88,14 +91,14 @@ namespace SOLUDIAMAGHREB.Controllers
         [HttpPost]
         public IActionResult SaveDeclarationLh([FromBody] ViewModelDeclarationLh model)
         {
-            
+
             try
             {
                 // Generate unique ID
                 string idDeclar = GenerateIdDeclar();
-              
 
-                bool declarationExists = _dbcontext.MyDeclarationlhs.Any(my=>my.NomberBordereau == model.NomberBordereau);
+
+                bool declarationExists = _dbcontext.MyDeclarationlhs.Any(my => my.NomberBordereau == model.NomberBordereau);
                 if (!declarationExists)
                 {
                     var DeclarationLh = new Declarationlh
@@ -149,7 +152,7 @@ namespace SOLUDIAMAGHREB.Controllers
             List<Declarationlh> List = _dbcontext.MyDeclarationlhs.ToList();
 
             return View(List);
-                
+
         }
 
         [HttpGet]
@@ -159,11 +162,16 @@ namespace SOLUDIAMAGHREB.Controllers
             return View(List);
         }
         [HttpGet]
+        public IActionResult ListeColisage()
+        {
+            return View();
+        }
+        [HttpGet]
 
         public IActionResult GenerateActEngage(string selectedBordereau = null)
         {
-            
-                var viewModel = new ViewModelActManager();
+
+            var viewModel = new ViewModelActManager();
 
             // Get all distinct bordereau numbers
             viewModel.BordereauNumbers = _dbcontext.MyBorderauItems
@@ -208,7 +216,7 @@ namespace SOLUDIAMAGHREB.Controllers
 
             return View(viewModel);
         }
-      
+
         [HttpPost]
         public async Task<IActionResult> GenerateActEngage(ViewModelActManager model)
         {
@@ -218,9 +226,13 @@ namespace SOLUDIAMAGHREB.Controllers
                 return RedirectToAction("GenerateActEngage", new { selectedBordereau = model.NomberBordereau });
             }
             return RedirectToAction("GenerateActEngage");
-           
-        }
 
+        }
+        [HttpGet]
+        public IActionResult GenListeColisage()
+        {
+            return View();
+        }
 
         [HttpGet]
         public JsonResult GetNLotDetails(string bordereau, string nLot)
@@ -275,7 +287,7 @@ namespace SOLUDIAMAGHREB.Controllers
 
 
                 });
-               // return RedirectToAction("ListActEngage");
+                // return RedirectToAction("ListActEngage");
 
             }
             catch (Exception ex)
@@ -683,9 +695,9 @@ namespace SOLUDIAMAGHREB.Controllers
 
         public IActionResult ViewPdfDeclar(string IdDeclar)
         {
-           
-            ViewModelDeclarationLh model = _dbcontext.MyDeclarationlhs.Where (id => id.IdDeclar == IdDeclar)
-                .Select (v=>new ViewModelDeclarationLh
+
+            ViewModelDeclarationLh model = _dbcontext.MyDeclarationlhs.Where(id => id.IdDeclar == IdDeclar)
+                .Select(v => new ViewModelDeclarationLh
                 {
                     AppelOffer = v.AppelOffer,
                     ObjectMarche = v.ObjectMarche,
@@ -732,18 +744,18 @@ namespace SOLUDIAMAGHREB.Controllers
         //////// Scripts est Methods/////////
         private string GenerateIdDeclar()
         {
-            var latestIdDeclar= _dbcontext.MyDeclarationlhs
-                .OrderByDescending(id=>id.IdDeclar)
+            var latestIdDeclar = _dbcontext.MyDeclarationlhs
+                .OrderByDescending(id => id.IdDeclar)
                 .FirstOrDefault();
             int nexIdDeclar = 1;
-            if(latestIdDeclar != null)
+            if (latestIdDeclar != null)
             {
                 string latestIddecl = latestIdDeclar.IdDeclar;
-                if(latestIddecl.StartsWith("Declar") && int.TryParse(latestIddecl.Substring(6), out int idNumber))
+                if (latestIddecl.StartsWith("Declar") && int.TryParse(latestIddecl.Substring(6), out int idNumber))
                 {
-                    nexIdDeclar = idNumber+1;
+                    nexIdDeclar = idNumber + 1;
                 }
-           }
+            }
             return $"Declar{nexIdDeclar:D5}"; // Zero-padded to 4 digits
 
         }

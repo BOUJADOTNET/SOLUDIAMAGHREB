@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using SOLUDIAMAGHREB.Services.Contract;
-using System.Linq.Expressions;
 
 namespace SOLUDIAMAGHREB.Services.Implementation
 {

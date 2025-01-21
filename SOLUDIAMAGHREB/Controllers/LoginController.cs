@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using SOLUDIAMAGHERB.Resources;
 using SOLUDIAMAGHERB.Services.Contract;
 using SOLUDIAMAGHREB.Models;
-using System.Security.Claims;
 
 namespace SOLUDIAMAGHERB.Controllers
 {
